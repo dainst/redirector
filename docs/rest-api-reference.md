@@ -1,13 +1,14 @@
 # Rest Api Reference
 
-If the targetUrl is `localhost:4777` and the mappings file 
-is as follows
+Assuming a config.properties with 
+`targetUrl=http://localhost:4777/` and a redirects file 
+containing
 
 ```
 1,project/a
 ```
 
-then redirects like 
+redirects like 
 
 ```
 localhost:4567/drupal/?q=node/1 -> localhost:4777/project/a 

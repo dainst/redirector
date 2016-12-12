@@ -5,6 +5,8 @@ A tool written to maintain the permanent redirects from Arachne 3 to Arachne 4.
 ## Build 
 
 ```
+$ cp config/config.properties.template config/config.properties # adjust if necessary
+$ cp config/redirects.csv.template config/redirects.csv # adjust if necessary
 $ gradle clean shadowJar
 ```
 
