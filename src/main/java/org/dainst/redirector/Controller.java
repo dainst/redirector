@@ -2,6 +2,8 @@ package org.dainst.redirector;
 
 import org.apache.log4j.Logger;
 
+import java.util.Map;
+
 import static spark.Spark.*;
 
 
@@ -14,11 +16,15 @@ public class Controller {
     public static final String ID = ":id";
 
     public Controller(
+            String targetUrl,
+            Map<String,String> m
             ) {
-        get( "/", (req,res) -> {
-            res.redirect("http://arachne.dainst.org/project/grako", 301);
-            return "hallo";
-        });
 
+        for (String key : m.keySet()) {
+            get( "/"+key, (req,res) -> {
+                res.redirect(targetUrl+m.get(key), 301);
+                return "hallo";
+            });
+        }
     }
 }
