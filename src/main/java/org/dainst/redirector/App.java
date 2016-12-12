@@ -23,7 +23,7 @@ public class App {
         Map<String,String> redirects = readRedirects(REDIRECTS_PATH);
 
         Connection conn = getConnection(get("dbJdbcUrl"),get("username"),get("password"));
-        new Controller(conn,get("targetUrl"),redirects);
+        new Controller(new DAO(conn),get("targetUrl"),redirects);
     }
 
 
