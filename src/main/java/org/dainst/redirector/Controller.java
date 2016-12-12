@@ -20,11 +20,15 @@ public class Controller {
             Map<String,String> m
             ) {
 
-        for (String key : m.keySet()) {
-            get( "/"+key, (req,res) -> {
-                res.redirect(targetUrl+m.get(key), 301);
-                return "hallo";
-            });
-        }
+
+        get( "/drupal/", (req,res) -> {
+
+            if (req.queryParams("q").contains("node")) {
+                String nodeNumber = req.queryParams("q").split("node\\/")[1];
+                res.redirect(targetUrl+m.get(nodeNumber), 301);
+            }
+
+            return "ok";
+        });
     }
 }
