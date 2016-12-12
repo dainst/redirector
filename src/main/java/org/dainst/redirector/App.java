@@ -22,8 +22,10 @@ public class App {
         loadConfiguration(PROPS_PATH);
         Map<String,String> redirects = readRedirects(REDIRECTS_PATH);
 
-        Connection conn = getConnection(get("dbJdbcUrl"),get("username"),get("password"));
-        new Controller(new DAO(conn),get("targetUrl"),redirects);
+        new Controller(
+                new DAO(getConnection(get("dbJdbcUrl"),get("username"),get("password")))
+                ,get("targetUrl"),
+                redirects);
     }
 
 
@@ -37,8 +39,8 @@ public class App {
             return conn;
 //            conn.close(); // TODO implement proper tear down
         }
-        catch (Exception ex) {
-            System.err.println("Error: "+ex.getMessage());
+        catch (Exception e) {
+            System.err.println("Error: "+e.getMessage());
             System.exit(1);
             return null; // dead code
         }
@@ -63,6 +65,7 @@ public class App {
             in.close();
             return m;
         } catch (Exception e) {
+            System.err.println("Error: "+e.getMessage());
             System.exit(1);
             return null; // dead code
         }
@@ -73,17 +76,13 @@ public class App {
 
         String s = props.getProperty(propertyName);
         if (s==null) {
-            System.out.println(propertyName+" not defined in "+PROPS_PATH+".");
+            System.err.println(propertyName+" not defined in "+PROPS_PATH+".");
             System.exit(1);
         }
         return s;
     }
 
 
-    /**
-     * @param propertiesFileRelativePath
-     * @return null if an error occured
-     */
     private static void loadConfiguration(String propertiesFileRelativePath) {
         props = new Properties();
         try (
@@ -91,8 +90,8 @@ public class App {
         {
             props.load(is);
         } catch (IOException e) {
-            System.out.println("Could not load properties from file: "+propertiesFileRelativePath);
-            System.out.println(e.getMessage());
+            System.err.println("Could not load properties from file: "+propertiesFileRelativePath);
+            System.err.println(e.getMessage());
             System.exit(1);
         }
     }
