@@ -6,20 +6,18 @@ import java.sql.ResultSet;
 /**
  * @author Daniel de Oliveira
  */
-public class DAO {
+class DAO {
 
     private Connection conn;
 
-    public DAO(Connection conn) {
+    DAO(Connection conn) {
         this.conn = conn;
     }
 
     /**
-     * @param tn
-     * @param fk
      * @return {@code null} if not successful
      */
-    public String getEntityID(String tn,String fk) {
+    String getEntityID(String tn,String fk) {
 
         String query = "SELECT ArachneEntityID FROM arachneentityidentification "+
                 "WHERE ForeignKey='"+fk+"'"+
