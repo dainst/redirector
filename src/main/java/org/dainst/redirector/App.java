@@ -1,9 +1,10 @@
 package org.dainst.redirector;
 
-import java.io.*;
-import java.sql.*;
+import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * @author Daniel de Oliveira
@@ -14,15 +15,15 @@ public class App {
     private static String REDIRECTS_PATH="config/redirects.csv";
     private static String JDBC_DRIVER="com.mysql.jdbc.Driver";
 
-    private static Properties props = null;
+    private static Map<String,String> props = null;
 
     public static void main(String [] args) throws FileNotFoundException {
 
-        loadConfiguration(PROPS_PATH);
+        props = loadConf(PROPS_PATH,"=");
         new Controller(
                 new DAO(getConnection(get("dbJdbcUrl"),get("username"),get("password")))
                 ,get("targetUrl"),
-                loadRedirects(REDIRECTS_PATH));
+                loadConf(REDIRECTS_PATH,","));
     }
 
     private static Connection getConnection(String dbJdbcUrl,String username,String password) {
@@ -47,10 +48,9 @@ public class App {
         }
     }
 
-
     private static String get(String propertyName)  {
 
-        String s = props.getProperty(propertyName);
+        String s = props.get(propertyName);
         if (s==null) {
             System.err.println(propertyName+" not defined in "+PROPS_PATH+".");
             System.exit(1);
@@ -58,23 +58,9 @@ public class App {
         return s;
     }
 
-
-    private static void loadConfiguration(String path) {
-        try (
-                FileInputStream is =new FileInputStream(new File(path)))
-        {
-            props = new Properties();
-            props.load(is);
-        } catch (IOException e) {
-            System.err.println("Could not load properties from file: "+path);
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
-    }
-
-    private static Map<String,String> loadRedirects(String path) {
+    private static Map<String,String> loadConf(String path,String sep) {
         try {
-            return RedirectsReader.read(path);
+            return ConfReader.read(path,sep);
         } catch (Exception e) {
             System.err.println("Error: "+e.getMessage());
             System.exit(1);
