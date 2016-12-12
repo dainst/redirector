@@ -1,6 +1,7 @@
 package org.dainst.redirector;
 
 import java.io.*;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -12,22 +13,39 @@ public class App {
 
     private static String PROPS_PATH="config/config.properties";
     private static String REDIRECTS_PATH="config/redirects.csv";
+    private static String JDBC_DRIVER="com.mysql.jdbc.Driver";
+
+    private static Properties props = null;
 
     public static void main(String [] args) throws FileNotFoundException {
 
-        Map<String,String> m = readRedirects(REDIRECTS_PATH);
-        if (m==null) System.exit(1);
+        loadConfiguration(PROPS_PATH);
+        Map<String,String> redirects = readRedirects(REDIRECTS_PATH);
 
-        String targetUrl;
-        if ((targetUrl=properties(PROPS_PATH)
-                .getProperty("targetUrl"))==null) {
+        Connection conn = getConnection(get("dbJdbcUrl"),get("username"),get("password"));
+        new Controller(conn,get("targetUrl"),redirects);
+    }
 
-            System.out.println("targetUrl not defined in config.properties.");
+
+
+    private static Connection getConnection(String dbJdbcUrl,String username,String password) {
+        try
+        {
+            Class.forName(JDBC_DRIVER).newInstance();
+            Connection conn = DriverManager.getConnection(dbJdbcUrl,
+                    username, password);
+            return conn;
+//            conn.close(); // TODO implement proper tear down
+        }
+        catch (Exception ex) {
+            System.err.println("Error: "+ex.getMessage());
             System.exit(1);
-        } else {
-            new Controller(targetUrl,m);
+            return null; // dead code
         }
     }
+
+
+
 
     private static Map<String,String> readRedirects(String redirectsPath) {
 
@@ -45,39 +63,37 @@ public class App {
             in.close();
             return m;
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            System.exit(1);
+            return null; // dead code
         }
     }
 
-    /**
-     * Gets the props or exits with 1.
-     * @param path
-     * @return
-     */
-    private static Properties properties(String path) {
-        Properties props= loadConfiguration(path);
-        if (props==null) {
-            System.out.println("Could not load properties from file: config.properties.");
+
+    private static String get(String propertyName)  {
+
+        String s = props.getProperty(propertyName);
+        if (s==null) {
+            System.out.println(propertyName+" not defined in "+PROPS_PATH+".");
             System.exit(1);
         }
-        return props;
+        return s;
     }
+
 
     /**
      * @param propertiesFileRelativePath
      * @return null if an error occured
      */
-    private static Properties loadConfiguration(String propertiesFileRelativePath) {
-        Properties props = new Properties();
+    private static void loadConfiguration(String propertiesFileRelativePath) {
+        props = new Properties();
         try (
                 FileInputStream is =new FileInputStream(new File(propertiesFileRelativePath)))
         {
             props.load(is);
         } catch (IOException e) {
+            System.out.println("Could not load properties from file: "+propertiesFileRelativePath);
             System.out.println(e.getMessage());
-            return null;
+            System.exit(1);
         }
-        return props;
     }
 }
