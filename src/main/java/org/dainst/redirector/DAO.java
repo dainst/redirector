@@ -25,8 +25,7 @@ public class DAO {
                 "WHERE ForeignKey='"+fk+"'"+
                 "AND TableName='"+tn+"'";
 
-        try {
-            ResultSet rs = conn.createStatement().executeQuery(query);
+        try (ResultSet rs = conn.createStatement().executeQuery(query)) {
             if (rs.next())
                 return rs.getString("ArachneEntityID");
 
