@@ -20,6 +20,7 @@ class Controller {
         get( "/drupal/", (req,res) -> {
             if (req.queryParams("q").contains("node")) {
                 String nodeNumber = req.queryParams("q").split("node\\/")[1];
+                if (m.get(nodeNumber) == null) return null;
                 res.redirect(targetUrl+m.get(nodeNumber), 301);
             }
             return "ok";
