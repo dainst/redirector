@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+sourceCompatibility = 1.8
+
+mainClassName = 'org.dainst.redirector.App'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'commons-codec:commons-codec:1.5'
+    compile 'org.skyscreamer:jsonassert:1.2.3'
+    compile 'log4j:log4j:1.2.17'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.6.3'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
+    compile 'com.sparkjava:spark-core:2.3'
+    testCompile 'org.testng:testng:6.9.9'
+    testCompile 'org.mockito:mockito-all:1.8.4'
+    compile 'org.elasticsearch:elasticsearch:1.7.3'
+    compile 'com.squareup.okhttp:okhttp:2.7.5'
+    compile 'org.apache.commons:commons-io:1.3.2'
+    compile 'org.apache.commons:commons-lang3:3.4'
+}
+
+shadowJar {
+    baseName = 'redirector'
+    classifier = null
+    version = null
+    mergeServiceFiles()
+}
+
+shadowJar.dependsOn test
+
+test {
+    useTestNG()
+    scanForTestClasses = false
+    include '**/*Test.class'
+
+    testLogging {
+        showStandardStreams = true
+
+        // log results to "build/test-results" directory
+        exceptionFormat "full"
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+}
