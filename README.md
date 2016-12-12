@@ -10,6 +10,14 @@ $ cp config/redirects.csv.template config/redirects.csv # adjust if necessary
 $ gradle clean shadowJar
 ```
 
+## Start 
+
+```
+$ java -jar build/libs/redirector.jar
+```
+
+starts the server, which listens on `localhost` port `4567`.
+
 ## Rest Api
 
 [Reference](docs/rest-api-reference.md)

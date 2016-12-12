@@ -1,5 +1,8 @@
 # Rest Api Reference
 
+
+## GET /drupal/*
+
 Assuming a config.properties with 
 `targetUrl=http://localhost:4777/` and a redirects file 
 containing
@@ -18,3 +21,18 @@ localhost:4567/drupal/?q=/en_EN/node/1 -> localhost:4777/project/a
 ```
 
 would get executed.
+
+## GET /item/*
+
+Assuming a config.properties with 
+`targetUrl=http://localhost:4777/`, calls to 
+
+```
+localhost:4567/item/typus/9`
+```
+
+would go  to
+
+```
+localhost:4777/èntity/1242001 
+```
