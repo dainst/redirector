@@ -28,7 +28,7 @@ Assuming a config.properties with
 `targetUrl=http://localhost:4777/`, calls to 
 
 ```
-localhost:4567/item/typus/9`
+localhost:4567/item/typus/9
 ```
 
 would go  to
