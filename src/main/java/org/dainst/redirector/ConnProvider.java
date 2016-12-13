@@ -25,7 +25,7 @@ class ConnProvider {
         }
     }
 
-    Connection getConn() {
+    Connection conn() {
         return conn;
     }
 

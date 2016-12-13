@@ -11,7 +11,7 @@ class DAO {
     private Connection conn;
 
     DAO(ConnProvider connProvider) {
-        this.conn = connProvider.getConn();
+        this.conn = connProvider.conn();
     }
 
     /**

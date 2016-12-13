@@ -15,24 +15,24 @@ class Controller {
     Controller(
             DAO dao,
             String targetUrl,
-            Map<String,String> m,
+            Map<String,String> redirectMappings,
             String contactInfo
             ) {
 
         get( "/drupal/", (req,res) -> {
             if (!req.queryParams("q").contains("node")) return withContactInfo(res,contactInfo);
             String nodeNumber = req.queryParams("q").split("node\\/")[1];
-            if (m.get(nodeNumber) == null) return withContactInfo(res,contactInfo);
-            String redirectUrlPartial = m.get(nodeNumber);
+            if (redirectMappings.get(nodeNumber) == null) return withContactInfo(res,contactInfo);
+            String redirectUrlPartial = redirectMappings.get(nodeNumber);
             if (redirectUrlPartial == null) return withContactInfo(res,contactInfo);
             res.redirect(targetUrl+redirectUrlPartial, 301);
             return "ok";
         });
 
         get( "/drupal/node/:node_id", (req,res) -> {
-            String redirectUrlPartial = m.get(req.params(":node_id"));
+            String redirectUrlPartial = redirectMappings.get(req.params(":node_id"));
             if (redirectUrlPartial == null) return withContactInfo(res,contactInfo);
-            res.redirect(targetUrl+m.get(req.params(":node_id")), 301);
+            res.redirect(targetUrl+redirectMappings.get(req.params(":node_id")), 301);
             return "ok";
         });
 
