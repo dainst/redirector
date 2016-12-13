@@ -4,7 +4,7 @@ The examples assume
 a config.properties with 
 `targetUrl=http://localhost:4777/`.
 
-## GET /drupal/?q=<queryString>
+## GET /drupal/?q=&lt;queryString&gt;
 
 Assuming a redirects file 
 containing
