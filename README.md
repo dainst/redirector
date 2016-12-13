@@ -16,7 +16,8 @@ $ gradle clean shadowJar
 $ java -jar build/libs/redirector.jar
 ```
 
-starts the server, which listens on `localhost` port `4567`.
+starts the server, which listens on `localhost` on the `serverPort`
+configured in [config.properties](config/config.properties.template).
 
 ## Rest Api
 

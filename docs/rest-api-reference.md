@@ -2,7 +2,7 @@
 
 The examples assume 
 a config.properties with 
-`targetUrl=http://localhost:4777/`.
+`targetUrl=http://localhost:4777/` and `serverPort=4567`.
 
 ## GET /drupal/?q=&lt;queryString&gt;
 

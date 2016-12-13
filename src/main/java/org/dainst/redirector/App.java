@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 
+import static spark.Spark.port;
+
 /**
  * @author Daniel de Oliveira
  */
@@ -20,6 +22,7 @@ public class App {
     public static void main(String [] args) throws FileNotFoundException {
 
         props = loadConf(PROPS_PATH,"=");
+        port(Integer.parseInt(get("serverPort")));
         new Controller(
                 new DAO(getConnection(get("dbJdbcUrl"),get("username"),get("password")))
                 ,get("targetUrl"),

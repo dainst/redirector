@@ -2,3 +2,4 @@ targetUrl=http://localhost:8081/
 dbJdbcUrl=jdbc:mysql://bn.de/a
 username=
 password=
+serverPort=4567
