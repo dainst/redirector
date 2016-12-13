@@ -28,7 +28,8 @@ public class App {
         new Controller(
                 new DAO(connProvider)
                 , getProp("targetUrl"),
-                loadConf(REDIRECTS_PATH,","));
+                loadConf(REDIRECTS_PATH,","),
+                getProp("contactInfo"));
     }
 
     private static void prepareShutDown(ConnProvider connProvider) {
