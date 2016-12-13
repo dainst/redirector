@@ -17,12 +17,25 @@ class DAO {
     /**
      * @return {@code null} if not successful
      */
-    String getEntityID(String tn,String fk) {
+    String getEntityID(String tableName,String foreignKey) {
 
-        String query = "SELECT ArachneEntityID FROM arachneentityidentification "+
-                "WHERE ForeignKey='"+fk+"'"+
-                "AND TableName='"+tn+"'";
+        return execQuery("SELECT ArachneEntityID FROM arachneentityidentification "+
+                "WHERE ForeignKey='"+foreignKey+"'"+
+                "AND TableName='"+tableName+"'");
+    }
 
+    /**
+     * @return {@code null} if not successful
+     */
+    String getEntityID(String bookAlias) {
+
+        return execQuery("SELECT ArachneEntityID FROM arachneentityidentification "+
+                "WHERE ForeignKey=(SELECT PS_BuchID FROM buch WHERE alias='"+bookAlias+"')"+
+                "AND TableName='buch'");
+    }
+
+
+    private String execQuery(String query) {
         try (ResultSet rs = conn.createStatement().executeQuery(query)) {
             if (rs.next())
                 return rs.getString("ArachneEntityID");

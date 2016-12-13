@@ -1,9 +1,8 @@
 package org.dainst.redirector;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+
 import java.util.Map;
-import static spark.Spark.*;
+
+import static spark.Spark.get;
 
 
 /**
@@ -26,8 +25,17 @@ class Controller {
             return "ok";
         });
 
-        get( "/item/*/:id", (req,res) -> {
-            String eid = dao.getEntityID(req.splat()[0],req.params(":id"));
+        get( "/item/*/:id_in_category", (req,res) -> {
+            String category = req.splat()[0];
+
+            String eid = dao.getEntityID(category,req.params(":id_in_category"));
+            if (eid!=null)
+                res.redirect(targetUrl+"entity/"+eid, 301);
+            return "ok";
+        });
+
+        get( "/books/:book_alias", (req,res) -> {
+            String eid = dao.getEntityID(req.params(":book_alias"));
             if (eid!=null)
                 res.redirect(targetUrl+"entity/"+eid, 301);
             return "ok";
