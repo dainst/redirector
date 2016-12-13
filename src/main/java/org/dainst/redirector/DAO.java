@@ -10,8 +10,8 @@ class DAO {
 
     private Connection conn;
 
-    DAO(Connection conn) {
-        this.conn = conn;
+    DAO(ConnProvider connProvider) {
+        this.conn = connProvider.getConn();
     }
 
     /**
@@ -33,7 +33,6 @@ class DAO {
                 "WHERE ForeignKey=(SELECT PS_BuchID FROM buch WHERE alias='"+bookAlias+"')"+
                 "AND TableName='buch'");
     }
-
 
     private String execQuery(String query) {
         try (ResultSet rs = conn.createStatement().executeQuery(query)) {

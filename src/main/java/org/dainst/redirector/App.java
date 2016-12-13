@@ -1,9 +1,6 @@
 package org.dainst.redirector;
 
 import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Map;
 
 import static spark.Spark.port;
@@ -15,43 +12,49 @@ public class App {
 
     private static String PROPS_PATH="config/config.properties";
     private static String REDIRECTS_PATH="config/redirects.csv";
-    private static String JDBC_DRIVER="com.mysql.jdbc.Driver";
+
 
     private static Map<String,String> props = null;
 
     public static void main(String [] args) throws FileNotFoundException {
 
         props = loadConf(PROPS_PATH,"=");
-        port(Integer.parseInt(get("serverPort")));
+
+        ConnProvider connProvider = getConn(
+                getProp("dbJdbcUrl"), getProp("username"), getProp("password"));
+        prepareShutDown(connProvider);
+
+        port(Integer.parseInt(getProp("serverPort")));
         new Controller(
-                new DAO(getConnection(get("dbJdbcUrl"),get("username"),get("password")))
-                ,get("targetUrl"),
+                new DAO(connProvider)
+                , getProp("targetUrl"),
                 loadConf(REDIRECTS_PATH,","));
     }
 
-    private static Connection getConnection(String dbJdbcUrl,String username,String password) {
-        Connection conn=null;
-        try
-        {
-            Class.forName(JDBC_DRIVER).newInstance();
-            conn = DriverManager.getConnection(dbJdbcUrl,
-                    username, password);
-            return conn;
-//            conn.close(); // TODO implement proper tear down
-        }
-        catch (Exception e) {
-            if (conn!=null) try {
-                conn.close();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
+    private static void prepareShutDown(ConnProvider connProvider) {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                System.out.println("Shutting down redirector.");
+                try {
+                    connProvider.destroy();
+                } catch (Exception e) {
+                    System.err.println("Error: "+e.getMessage());
+                }
             }
+        });
+    }
+
+    private static ConnProvider getConn(String dbJdbcUrl,String username,String password) {
+        try {
+            return new ConnProvider(dbJdbcUrl,username,password);
+        } catch (Exception e) {
             System.err.println("Error: "+e.getMessage());
             System.exit(1);
             return null; // dead code
         }
     }
 
-    private static String get(String propertyName)  {
+    private static String getProp(String propertyName)  {
 
         String s = props.get(propertyName);
         if (s==null) {

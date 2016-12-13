@@ -18,6 +18,7 @@ $ java -jar build/libs/redirector.jar
 
 starts the server, which listens on `localhost` on the `serverPort`
 configured in [config.properties](config/config.properties.template).
+Using `Ctrl-C` leads to a graceful application shutdown.
 
 ## Rest Api
 
