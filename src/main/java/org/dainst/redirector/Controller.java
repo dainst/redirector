@@ -25,15 +25,17 @@ class Controller {
             String nodeNumber = req.queryParams("q").split("node\\/")[1];
             if (redirectMappings.get(nodeNumber) == null) return with404(res,contactInfo);
             String redirectUrlPartial = (String) redirectMappings.get(nodeNumber);
-            if (redirectUrlPartial == null) return with404(res,contactInfo);
+            if (redirectUrlPartial == null || redirectUrlPartial.isEmpty())
+                return with404(res,contactInfo);
             res.redirect(targetUrl+redirectUrlPartial, 301);
             return "ok";
         });
 
         get( "/drupal/node/:node_id", (req,res) -> {
             String redirectUrlPartial = (String) redirectMappings.get(req.params(":node_id"));
-            if (redirectUrlPartial == null) return with404(res,contactInfo);
-            res.redirect(targetUrl+redirectMappings.get(req.params(":node_id")), 301);
+            if (redirectUrlPartial == null || redirectUrlPartial.isEmpty())
+                return with404(res,contactInfo);
+            res.redirect(targetUrl+redirectUrlPartial, 301);
             return "ok";
         });
 
