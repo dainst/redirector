@@ -10,7 +10,7 @@ Assuming a redirects file
 containing
 
 ```
-257,project/syrher
+257=project/syrher
 ```
 
 all requests like

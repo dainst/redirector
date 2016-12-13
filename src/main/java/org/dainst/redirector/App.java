@@ -1,7 +1,10 @@
 package org.dainst.redirector;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Map;
+import java.util.Properties;
 
 import static spark.Spark.port;
 
@@ -11,14 +14,14 @@ import static spark.Spark.port;
 public class App {
 
     private static String PROPS_PATH="config/config.properties";
-    private static String REDIRECTS_PATH="config/redirects.csv";
+    private static String REDIRECTS_PATH="config/redirects.properties";
 
 
-    private static Map<String,String> props = null;
+    private static Properties props = null;
 
     public static void main(String [] args) throws FileNotFoundException {
 
-        props = loadConf(PROPS_PATH,"=");
+        props = loadConf(PROPS_PATH);
 
         ConnProvider connProvider = getConn(
                 getProp("dbJdbcUrl"), getProp("username"), getProp("password"));
@@ -28,7 +31,7 @@ public class App {
         new Controller(
                 new DAO(connProvider)
                 , getProp("targetUrl"),
-                loadConf(REDIRECTS_PATH,","),
+                loadConf(REDIRECTS_PATH),
                 getProp("contactInfo"));
     }
 
@@ -57,7 +60,7 @@ public class App {
 
     private static String getProp(String propertyName)  {
 
-        String s = props.get(propertyName);
+        String s = (String) props.get(propertyName);
         if (s==null) {
             System.err.println(propertyName+" not defined in "+PROPS_PATH+".");
             System.exit(1);
@@ -65,9 +68,11 @@ public class App {
         return s;
     }
 
-    private static Map<String,String> loadConf(String path,String sep) {
+    private static Properties loadConf(String path) {
         try {
-            return ConfReader.read(path,sep);
+            Properties props = new Properties();
+            props.load(new FileInputStream(path));
+            return props;
         } catch (Exception e) {
             System.err.println("Error: "+e.getMessage());
             System.exit(1);
